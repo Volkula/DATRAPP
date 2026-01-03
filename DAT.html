@@ -1,0 +1,1108 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Revopoint Dual Axis Turntable</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    :root {
+        --primary-color: #667eea;
+        --secondary-color: #764ba2;
+        --accent-color: #f093fb;
+        --bg-dark: #0f0f23;
+        --bg-card: #1a1a2e;
+        --bg-card-hover: #252542;
+        --text-primary: #ffffff;
+        --text-secondary: #a0a0c0;
+        --success: #4ade80;
+        --warning: #fbbf24;
+        --danger: #f87171;
+        --shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+        --shadow-lg: 0 20px 60px rgba(102, 126, 234, 0.4);
+    }
+
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @keyframes pulse {
+
+        0%,
+        100% {
+            transform: scale(1);
+        }
+
+        50% {
+            transform: scale(1.05);
+        }
+    }
+
+    @keyframes rotate {
+        from {
+            transform: rotate(0deg);
+        }
+
+        to {
+            transform: rotate(360deg);
+        }
+    }
+
+    @keyframes slideIn {
+        from {
+            transform: translateX(-100%);
+            opacity: 0;
+        }
+
+        to {
+            transform: translateX(0);
+            opacity: 1;
+        }
+    }
+
+    @keyframes shimmer {
+        0% {
+            background-position: -1000px 0;
+        }
+
+        100% {
+            background-position: 1000px 0;
+        }
+    }
+
+    html {
+        scroll-behavior: smooth;
+    }
+
+    body {
+        background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #0f0f23 100%);
+        background-attachment: fixed;
+        color: var(--text-primary);
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        min-height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 20px;
+        position: relative;
+        overflow-x: hidden;
+    }
+
+    body::before {
+        content: '';
+        position: fixed;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: radial-gradient(circle, rgba(102, 126, 234, 0.1) 1px, transparent 1px);
+        background-size: 50px 50px;
+        animation: rotate 60s linear infinite;
+        pointer-events: none;
+        z-index: 0;
+    }
+
+    .container {
+        max-width: 1000px;
+        width: 100%;
+        position: relative;
+        z-index: 1;
+        animation: fadeInUp 0.8s ease-out;
+    }
+
+    .header {
+        text-align: center;
+        margin-bottom: 40px;
+        animation: fadeInUp 0.6s ease-out;
+    }
+
+    .header h1 {
+        font-size: 3rem;
+        background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin-bottom: 10px;
+        font-weight: 700;
+        text-shadow: 0 0 30px rgba(102, 126, 234, 0.5);
+    }
+
+    .header .subtitle {
+        color: var(--text-secondary);
+        font-size: 1.1rem;
+    }
+
+    .card {
+        background: var(--bg-card);
+        border-radius: 20px;
+        padding: 30px;
+        margin-bottom: 25px;
+        box-shadow: var(--shadow);
+        border: 1px solid rgba(102, 126, 234, 0.2);
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        animation: fadeInUp 0.8s ease-out backwards;
+    }
+
+    .card:hover {
+        transform: translateY(-5px);
+        box-shadow: var(--shadow-lg);
+        border-color: rgba(102, 126, 234, 0.5);
+    }
+
+    .card:nth-child(2) {
+        animation-delay: 0.1s;
+    }
+
+    .card:nth-child(3) {
+        animation-delay: 0.2s;
+    }
+
+    .card:nth-child(4) {
+        animation-delay: 0.3s;
+    }
+
+    .card:nth-child(5) {
+        animation-delay: 0.4s;
+    }
+
+    .card:nth-child(6) {
+        animation-delay: 0.5s;
+    }
+
+    .card-header {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        margin-bottom: 25px;
+        padding-bottom: 15px;
+        border-bottom: 2px solid rgba(102, 126, 234, 0.3);
+    }
+
+    .card-header i {
+        font-size: 1.8rem;
+        background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+
+    .card-header h3 {
+        font-size: 1.5rem;
+        font-weight: 600;
+    }
+
+    button {
+        background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+        border: none;
+        color: white;
+        padding: 12px 24px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 16px;
+        margin: 5px;
+        cursor: pointer;
+        border-radius: 12px;
+        font-weight: 600;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        position: relative;
+        overflow: hidden;
+        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+    }
+
+    button::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+        transition: left 0.5s;
+    }
+
+    button:hover::before {
+        left: 100%;
+    }
+
+    button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+    }
+
+    button:active {
+        transform: translateY(0);
+    }
+
+    button:disabled {
+        cursor: not-allowed !important;
+        background: linear-gradient(135deg, #4a5568, #718096);
+        opacity: 0.6;
+        transform: none;
+        box-shadow: none;
+    }
+
+    button i {
+        margin-right: 5px;
+    }
+
+    .btn-success {
+        background: linear-gradient(135deg, #10b981, #059669);
+    }
+
+    .btn-danger {
+        background: linear-gradient(135deg, #ef4444, #dc2626);
+    }
+
+    .btn-warning {
+        background: linear-gradient(135deg, #f59e0b, #d97706);
+    }
+
+    .btn-group {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .input-text {
+        border: 2px solid rgba(102, 126, 234, 0.3);
+        background: var(--bg-dark);
+        color: white;
+        padding: 12px 20px;
+        text-align: center;
+        font-weight: bold;
+        border-radius: 12px;
+        font-size: 16px;
+        transition: all 0.3s ease;
+        width: 100px;
+    }
+
+    .input-text:hover {
+        border-color: var(--primary-color);
+        background: var(--bg-card);
+    }
+
+    .input-text:focus {
+        outline: none;
+        border-color: var(--accent-color);
+        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2);
+        background: var(--bg-card);
+    }
+
+    .slider-container {
+        margin: 20px 0;
+    }
+
+    .slider-label {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 10px;
+        color: var(--text-secondary);
+        font-size: 0.95rem;
+    }
+
+    .slider-label .value {
+        color: var(--primary-color);
+        font-weight: bold;
+        font-size: 1.1rem;
+    }
+
+    .slider {
+        -webkit-appearance: none;
+        appearance: none;
+        width: 100%;
+        height: 8px;
+        border-radius: 5px;
+        background: linear-gradient(to right, var(--primary-color) 0%, var(--accent-color) 100%);
+        outline: none;
+        opacity: 0.8;
+        transition: opacity 0.3s, box-shadow 0.3s;
+        position: relative;
+    }
+
+    .slider:hover {
+        opacity: 1;
+        box-shadow: 0 0 15px rgba(102, 126, 234, 0.5);
+    }
+
+    .slider::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        appearance: none;
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+        cursor: pointer;
+        box-shadow: 0 0 10px rgba(102, 126, 234, 0.8);
+        transition: all 0.3s ease;
+    }
+
+    .slider::-webkit-slider-thumb:active {
+        appearance: none;
+    }
+
+    .slider::-webkit-slider-thumb:hover {
+        transform: scale(1.2);
+        box-shadow: 0 0 20px rgba(102, 126, 234, 1);
+    }
+
+    .slider::-moz-range-thumb {
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+        cursor: pointer;
+        border: none;
+        box-shadow: 0 0 10px rgba(102, 126, 234, 0.8);
+        transition: all 0.3s ease;
+    }
+
+    .slider::-moz-range-thumb:hover {
+        transform: scale(1.2);
+        box-shadow: 0 0 20px rgba(102, 126, 234, 1);
+    }
+
+    .status-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 16px;
+        border-radius: 20px;
+        font-size: 0.9rem;
+        font-weight: 600;
+        animation: slideIn 0.5s ease-out;
+    }
+
+    .status-badge.connected {
+        background: rgba(74, 222, 128, 0.2);
+        color: var(--success);
+        border: 1px solid var(--success);
+    }
+
+    .status-badge.disconnected {
+        background: rgba(248, 113, 113, 0.2);
+        color: var(--danger);
+        border: 1px solid var(--danger);
+    }
+
+    .status-badge i {
+        animation: pulse 2s infinite;
+    }
+
+    .control-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 15px;
+        margin: 20px 0;
+    }
+
+    .control-item {
+        text-align: center;
+    }
+
+    .control-item label {
+        display: block;
+        color: var(--text-secondary);
+        margin-bottom: 10px;
+        font-size: 0.95rem;
+    }
+
+    .rotation-control {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+
+    @keyframes blink {
+
+        0%,
+        50%,
+        100% {
+            opacity: 1;
+        }
+
+        25%,
+        75% {
+            opacity: 0.5;
+        }
+    }
+
+    .processing {
+        animation: blink 1.5s infinite;
+    }
+
+    .keyboard-hint {
+        background: rgba(102, 126, 234, 0.1);
+        border: 1px solid rgba(102, 126, 234, 0.3);
+        border-radius: 12px;
+        padding: 15px;
+        margin-top: 20px;
+        text-align: center;
+        color: var(--text-secondary);
+        font-size: 0.9rem;
+    }
+
+    .keyboard-hint kbd {
+        background: var(--bg-dark);
+        padding: 4px 8px;
+        border-radius: 6px;
+        border: 1px solid rgba(102, 126, 234, 0.4);
+        font-family: monospace;
+        color: var(--primary-color);
+        font-weight: bold;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+    }
+
+    .tilt-buttons {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 10px;
+        margin-top: 15px;
+    }
+
+    @media (max-width: 768px) {
+        .header h1 {
+            font-size: 2rem;
+        }
+
+        .card {
+            padding: 20px;
+        }
+
+        button {
+            padding: 10px 16px;
+            font-size: 14px;
+        }
+
+        .control-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    .connection-status {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        z-index: 1000;
+    }
+
+    .loading {
+        display: inline-block;
+        width: 12px;
+        height: 12px;
+        border: 2px solid rgba(255, 255, 255, 0.3);
+        border-radius: 50%;
+        border-top-color: white;
+        animation: rotate 1s linear infinite;
+    }
+
+    /* Tooltip */
+    [data-tooltip] {
+        position: relative;
+    }
+
+    [data-tooltip]::after {
+        content: attr(data-tooltip);
+        position: absolute;
+        bottom: 100%;
+        left: 50%;
+        transform: translateX(-50%) translateY(-5px);
+        background: var(--bg-dark);
+        color: white;
+        padding: 8px 12px;
+        border-radius: 8px;
+        white-space: nowrap;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.3s, transform 0.3s;
+        font-size: 0.85rem;
+        border: 1px solid rgba(102, 126, 234, 0.5);
+        z-index: 1000;
+    }
+
+    [data-tooltip]:hover::after {
+        opacity: 1;
+        transform: translateX(-50%) translateY(-10px);
+    }
+</style>
+
+<body>
+    <div class="connection-status">
+        <div id="status-badge" class="status-badge disconnected">
+            <i class="fas fa-circle"></i>
+            <span>Disconnected</span>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="header">
+            <h1><i class="fas fa-sync-alt"></i> Revopoint DAT Controller</h1>
+            <p class="subtitle">Advanced Dual Axis Turntable Control System</p>
+        </div>
+
+        <!-- Connection Card -->
+        <div class="card">
+            <div class="card-header">
+                <i class="fas fa-bluetooth-b"></i>
+                <h3>Connection</h3>
+            </div>
+            <div class="btn-group">
+                <button id="connection" onclick="connect()">
+                    <i class="fas fa-plug"></i> Connect Device
+                </button>
+            </div>
+        </div>
+
+        <!-- Speed Control Card -->
+        <div class="card">
+            <div class="card-header">
+                <i class="fas fa-tachometer-alt"></i>
+                <h3>Speed Control</h3>
+            </div>
+
+            <div class="slider-container">
+                <div class="slider-label">
+                    <span><i class="fas fa-sync"></i> Rotation Speed</span>
+                    <span class="value" id="num">35.64</span>
+                </div>
+                <input class="slider" type="range" min="35.64" max="131" value="35.64" step="0.01" id="rotation_speed"
+                    onchange="set_rotation_speed(this)" oninput="num.value = this.value" />
+            </div>
+
+            <div class="slider-container">
+                <div class="slider-label">
+                    <span><i class="fas fa-angle-double-up"></i> Tilt Speed</span>
+                    <span class="value" id="num2">15</span>
+                </div>
+                <input class="slider" type="range" min="9" max="35" value="15" id="tilt_speed"
+                    onchange="set_tilt_speed(this)" oninput="num2.value = this.value" />
+            </div>
+        </div>
+
+        <!-- Rotation Control Card -->
+        <div class="card">
+            <div class="card-header">
+                <i class="fas fa-redo"></i>
+                <h3>Rotation Control</h3>
+            </div>
+
+            <div class="rotation-control">
+                <button id="ct_backward" data-tooltip="Rotate left">
+                    <i class="fas fa-arrow-left"></i>
+                </button>
+                <input type="text" class="input-text" id="ct_turnangle" value="10" />
+                <button id="ct_forward" data-tooltip="Rotate right">
+                    <i class="fas fa-arrow-right"></i>
+                </button>
+                <button onclick="bluetoothSend('+CT,TOZERO;')" data-tooltip="Return to zero position">
+                    <i class="fas fa-bullseye"></i> Zero
+                </button>
+                <button class="btn-danger" onclick="bluetoothSend('+CT,STOP;')">
+                    <i class="fas fa-stop"></i> Stop
+                </button>
+            </div>
+
+            <div class="btn-group" style="margin-top: 20px;">
+                <button onclick="bluetoothSend('+CT,TURNANGLE=-360;')" data-tooltip="Rotate 360° left">
+                    <i class="fas fa-undo"></i> L360°
+                </button>
+                <button onclick="bluetoothSend('+CT,TURNANGLE=360;')" data-tooltip="Rotate 360° right">
+                    <i class="fas fa-redo"></i> R360°
+                </button>
+                <button onclick="bluetoothSend('+CT,TURNCONTINUE=-1;')" data-tooltip="Continuous rotation left">
+                    <i class="fas fa-infinity"></i> L ∞
+                </button>
+                <button onclick="bluetoothSend('+CT,TURNCONTINUE=1;')" data-tooltip="Continuous rotation right">
+                    <i class="fas fa-infinity"></i> R ∞
+                </button>
+            </div>
+        </div>
+
+        <!-- Tilt Control Card -->
+        <div class="card">
+            <div class="card-header">
+                <i class="fas fa-sliders-h"></i>
+                <h3>Tilt Control</h3>
+            </div>
+
+            <div class="rotation-control">
+                <button id="cr_backward" data-tooltip="Tilt down">
+                    <i class="fas fa-minus"></i>
+                </button>
+                <input type="text" class="input-text" id="cr_turnangle" value="15" />
+                <button id="cr_forward" data-tooltip="Tilt up">
+                    <i class="fas fa-plus"></i>
+                </button>
+                <button onclick="bluetoothSend('+CR,TOZERO;')" data-tooltip="Return to zero tilt">
+                    <i class="fas fa-bullseye"></i> Zero
+                </button>
+                <button class="btn-danger" onclick="bluetoothSend('+CR,STOP;')">
+                    <i class="fas fa-stop"></i> Stop
+                </button>
+            </div>
+
+            <div class="tilt-buttons">
+                <button onclick="bluetoothSend('+CR,TILTVALUE=-30;')">L30°</button>
+                <button onclick="bluetoothSend('+CR,TILTVALUE=-20;')">L20°</button>
+                <button onclick="bluetoothSend('+CR,TILTVALUE=-10;')">L10°</button>
+                <button onclick="bluetoothSend('+CR,TILTVALUE=10;')">R10°</button>
+                <button onclick="bluetoothSend('+CR,TILTVALUE=20;')">R20°</button>
+                <button onclick="bluetoothSend('+CR,TILTVALUE=30;')">R30°</button>
+            </div>
+        </div>
+
+        <!-- Auto Rotation Card -->
+        <div class="card">
+            <div class="card-header">
+                <i class="fas fa-robot"></i>
+                <h3>Auto Rotation Cycle</h3>
+            </div>
+
+            <div class="control-grid">
+                <div class="control-item">
+                    <label>Tilt Position 1</label>
+                    <input type="text" class="input-text" id="cr_tilt1" value="0" />
+                </div>
+                <div class="control-item">
+                    <label>Tilt Position 2</label>
+                    <input type="text" class="input-text" id="cr_tilt2" value="-30" />
+                </div>
+                <div class="control-item">
+                    <label>Tilt Position 3</label>
+                    <input type="text" class="input-text" id="cr_tilt3" value="15" />
+                </div>
+            </div>
+
+            <div class="btn-group" style="margin-top: 20px;">
+                <button class="btn-success" id="a_rot_start">
+                    <i class="fas fa-play"></i> Start Cycle
+                </button>
+                <button class="btn-danger" id="a_rot_stop">
+                    <i class="fas fa-stop"></i> Stop Cycle
+                </button>
+            </div>
+        </div>
+
+        <!-- Stepped Rotation Card -->
+        <div class="card">
+            <div class="card-header">
+                <i class="fas fa-layer-group"></i>
+                <h3>Stepped Rotation</h3>
+            </div>
+
+            <div class="control-grid">
+                <div class="control-item">
+                    <label>Steps per 360°</label>
+                    <input class="input-text" type="text" id="sp_steps" value="36" />
+                </div>
+                <div class="control-item">
+                    <label>Pause (ms)</label>
+                    <input class="input-text" type="text" id="sp_pause_time" value="2500" />
+                </div>
+            </div>
+
+            <div class="btn-group" style="margin-top: 20px;">
+                <button class="btn-success" id="sp_start">
+                    <i class="fas fa-play"></i> Start
+                </button>
+                <button class="btn-warning" id="sp_pause">
+                    <i class="fas fa-pause"></i> Pause
+                </button>
+                <button class="btn-danger" id="sp_stop">
+                    <i class="fas fa-stop"></i> Stop
+                </button>
+                <button id="sp_step_forward">
+                    <i class="fas fa-step-forward"></i> Step →
+                </button>
+                <button id="sp_step_back">
+                    <i class="fas fa-step-backward"></i> ← Step
+                </button>
+            </div>
+        </div>
+
+        <!-- Keyboard Shortcuts -->
+        <div class="keyboard-hint">
+            <strong><i class="fas fa-keyboard"></i> Keyboard Shortcuts:</strong>
+            <kbd>W</kbd> Tilt Up | <kbd>S</kbd> Tilt Down |
+            <kbd>A</kbd> Rotate Left | <kbd>D</kbd> Rotate Right
+        </div>
+    </div>
+
+    <script>
+        /**
+         * Revopoint DAT Controller - Web Bluetooth Interface
+         * Connect with nRFConnect to view services and characteristics
+         * Commands are written to service 0xffe0, characteristic 0xffe1
+         **/
+
+        var debuglog = false;
+        let server = false;
+        let tiltvalue = 0;
+        let sp_current_step = 0;
+        let sp_calc_angle = 0;
+        let sp_turnangle = 0;
+        let spInterval = false;
+        var button_stop_pressed = false;
+        var pause_read_result = false;
+        var getvalue_running = false;
+        var sendcommand = 0;
+        var pause = false;
+        var rws_status = false;
+        var rws_pause = false;
+
+        // Update connection status UI
+        function updateConnectionStatus(connected) {
+            const badge = document.getElementById('status-badge');
+            const icon = badge.querySelector('i');
+            const text = badge.querySelector('span');
+
+            if (connected) {
+                badge.className = 'status-badge connected';
+                icon.className = 'fas fa-check-circle';
+                text.textContent = 'Connected';
+                document.getElementById('connection').innerHTML = '<i class="fas fa-check"></i> Connected';
+            } else {
+                badge.className = 'status-badge disconnected';
+                icon.className = 'fas fa-circle';
+                text.textContent = 'Disconnected';
+                document.getElementById('connection').innerHTML = '<i class="fas fa-plug"></i> Connect Device';
+            }
+        }
+
+        async function connect() {
+            try {
+                const device = await navigator.bluetooth.requestDevice({
+                    acceptAllDevices: true,
+                    optionalServices: [0xffe0, 0xffe1],
+                });
+                server = await device.gatt.connect();
+
+                if (server !== null) {
+                    updateConnectionStatus(true);
+                    console.log("✅ Connected! Server: ", server);
+                }
+
+                // Handle disconnection
+                device.addEventListener('gattserverdisconnected', () => {
+                    updateConnectionStatus(false);
+                    server = false;
+                    console.log("❌ Device disconnected");
+                });
+
+                return server;
+            } catch (error) {
+                console.error("Connection error:", error);
+                updateConnectionStatus(false);
+            }
+        }
+
+        async function bluetoothSend(cmd) {
+            if (!server) {
+                alert('Please connect to device first!');
+                return;
+            }
+
+            if (debuglog) console.log("📤", cmd);
+
+            try {
+                var enc = new TextEncoder();
+                const service = await server.getPrimaryService(0xffe0);
+                const characteristic = await service.getCharacteristic(0xffe1);
+                await characteristic.writeValue(enc.encode(cmd));
+                var read = await characteristic.readValue();
+                var read_string = await new TextDecoder().decode(read);
+
+                if (debuglog) console.log("📥", read_string);
+                return await read_string;
+            } catch (error) {
+                console.error("Bluetooth send error:", error);
+                updateConnectionStatus(false);
+            }
+        }
+
+        async function set_rotation_speed(event) {
+            if (getvalue_running === true) {
+                pause_read_result = true;
+                rotation_speed_value = event.value;
+                sendcommand = `+CT,TURNSPEED=${rotation_speed_value};`;
+            } else {
+                await bluetoothSend(`+CT,TURNSPEED=${event.value};`);
+            }
+        }
+
+        async function set_tilt_speed(event) {
+            if (getvalue_running === true) {
+                pause_read_result = true;
+                tilt_speed_value = event.value;
+                sendcommand = `+CR,TILTSPEED=${tilt_speed_value};`;
+            } else {
+                await bluetoothSend(`+CR,TILTSPEED=${event.value};`);
+            }
+        }
+
+        async function getvalue(a, b) {
+            var read = await bluetoothSend('+QT,CHANGEANGLE;');
+            var read_result = read;
+            var read_result = read_result.replace('+DATA=', '');
+            var read_result = read_result.replace(';', '');
+            var read_result = parseInt(read_result);
+            getvalue_running = true;
+
+            if (b == 1) {
+                await sleep(50);
+                button_stop_pressed = false;
+                document.getElementById("a_rot_start").innerHTML = '<i class="fas fa-play"></i> Start Cycle'
+                return;
+            }
+
+            while (read_result < a && button_stop_pressed === false) {
+                var read = await bluetoothSend('+QT,CHANGEANGLE;');
+                var read_result = read;
+                var read_result = read_result.replace('+DATA=', '');
+                var read_result = read_result.replace(';', '');
+                var read_result = parseInt(read_result);
+                await sleep(40)
+                if (pause_read_result == true) {
+                    await sleep(50);
+                    await bluetoothSend(sendcommand);
+                    pause_read_result = false;
+                }
+                document.getElementById("a_rot_start").innerHTML = `<span class="loading"></span> ${read_result}°`;
+                document.getElementById("a_rot_start").classList.add('processing');
+            }
+            if (read_result >= a) {
+                getvalue_running = false;
+                document.getElementById("a_rot_start").classList.remove('processing');
+                return true;
+            } else { return; }
+        }
+
+        document.getElementById("ct_forward").addEventListener("click", async function (event) {
+            await bluetoothSend(`+CT,TURNANGLE=${document.getElementById("ct_turnangle").value};`);
+        });
+
+        document.getElementById("ct_backward").addEventListener("click", async function (event) {
+            await bluetoothSend(`+CT,TURNANGLE=-${document.getElementById("ct_turnangle").value};`);
+        });
+
+        document.getElementById("cr_forward").addEventListener("click", async function (event) {
+            await bluetoothSend(`+CR,TILTVALUE=${document.getElementById("cr_turnangle").value};`);
+        });
+
+        document.getElementById("cr_backward").addEventListener("click", async function (event) {
+            await bluetoothSend(`+CR,TILTVALUE=-${document.getElementById("cr_turnangle").value};`);
+        });
+
+        document.getElementById("a_rot_stop").addEventListener("click", async function (event) {
+            button_stop_pressed = true;
+            await sleep(1000);
+            await getvalue('0', 1);
+            await bluetoothSend(`+CT,STOP;`);
+            await bluetoothSend(`+CT,TOZERO;`);
+            await bluetoothSend(`+CR,TILTVALUE=0;`);
+            document.getElementById("a_rot_start").disabled = false;
+        });
+
+        document.getElementById("a_rot_start").addEventListener("click", async function (event) {
+            document.getElementById("a_rot_start").disabled = true;
+            tilt1_value = document.getElementById('cr_tilt1').value;
+            tilt2_value = document.getElementById('cr_tilt2').value;
+            tilt3_value = document.getElementById('cr_tilt3').value;
+
+            async function run_automatic() {
+                await bluetoothSend(`+CR,TILTVALUE=${document.getElementById("cr_tilt1").value};`);
+                await bluetoothSend('+CT,TURNCONTINUE=1;');
+                if (button_stop_pressed === true) { return; }
+                var position = await getvalue('350', 0);
+                if (position == true) {
+                    await bluetoothSend(`+CR,TILTVALUE=${document.getElementById("cr_tilt2").value};`);
+                    position == false;
+                }
+                await sleep(1000)
+                if (button_stop_pressed === true) { return; }
+                var position = await getvalue('350', 0);
+                if (position == true) {
+                    await bluetoothSend(`+CR,TILTVALUE=${document.getElementById("cr_tilt3").value};`);
+                    position == false;
+                }
+                await sleep(1000)
+                if (button_stop_pressed === true) { return; }
+                var position = await getvalue('350', 0);
+                if (position == true) {
+                    await bluetoothSend(`+CT,STOP;`);
+                    await bluetoothSend(`+CR,TILTVALUE=0;`);
+                    document.getElementById("a_rot_start").innerHTML = '<i class="fas fa-play"></i> Start Cycle'
+                    position == false;
+                }
+            }
+
+            run_automatic()
+        });
+
+        function sleep(milliseconds) {
+            return new Promise(resolve => setTimeout(resolve, milliseconds));
+        }
+
+        document.getElementById("sp_start").addEventListener("click", async function (event) {
+            document.getElementById("sp_start").disabled = true;
+            rws_status = true;
+            rws_pause = false;
+
+            async function rws() {
+                let step_size = 360 / Number(document.getElementById('sp_steps').value);
+                let next_step = step_size;
+                let trigger = false;
+                let execution = false;
+
+                await bluetoothSend(`+CT,STOP;`);
+                sleep(50);
+                await bluetoothSend(`+CT,TOZERO;`);
+                sleep(50);
+
+                while (rws_status) {
+                    if (!trigger) {
+                        await bluetoothSend(`+CT,TURNANGLE=${step_size};`);
+                        sp_current_step = ++sp_current_step;
+                        sleep(50);
+                        trigger = true;
+                    }
+
+                    var read = await bluetoothSend('+QT,CHANGEANGLE;');
+                    var angle = read;
+                    var angle = angle.replace('+DATA=', '');
+                    var angle = angle.replace(';', '');
+                    var angle = new Number(angle);
+
+                    const totalSteps = Number(document.getElementById('sp_steps').value);
+                    document.getElementById("sp_start").innerHTML = `<span class="loading"></span> ${sp_current_step} / ${totalSteps}`;
+
+                    if (angle >= 350 && execution == true || angle == 0 && execution == true) {
+                        rws_status = false;
+                        sp_current_step = 0;
+                        document.getElementById("sp_start").innerHTML = '<i class="fas fa-play"></i> Start';
+                        document.getElementById("sp_start").disabled = false;
+                        return;
+                    }
+                    else if (rws_pause === true) {
+                        while (rws_pause) {
+                            await sleep(1000);
+                        }
+                    }
+                    else if (angle >= next_step) {
+                        await sleep(Number(document.getElementById('sp_pause_time').value));
+                        trigger = false;
+                        execution = true;
+                        next_step += Math.round(step_size);
+                    }
+                }
+            }
+
+            rws();
+        });
+
+        document.getElementById("sp_pause").addEventListener("click", async function (event) {
+            if (rws_pause) {
+                rws_pause = false;
+                document.getElementById("sp_pause").innerHTML = '<i class="fas fa-pause"></i> Pause';
+            } else {
+                rws_pause = true;
+                document.getElementById("sp_pause").innerHTML = '<i class="fas fa-play"></i> Resume';
+            }
+        });
+
+        document.getElementById("sp_stop").addEventListener("click", async function (event) {
+            rws_status = false;
+            sleep(500);
+            await bluetoothSend(`+CT,STOP;`);
+            sleep(50);
+            await bluetoothSend(`+CT,TOZERO;`);
+            sp_current_step = 0;
+
+            rws_pause = false;
+            document.getElementById("sp_pause").innerHTML = '<i class="fas fa-pause"></i> Pause';
+
+            document.getElementById("sp_start").innerHTML = '<i class="fas fa-play"></i> Start';
+            document.getElementById("sp_start").disabled = false;
+        });
+
+        document.getElementById("sp_step_back").addEventListener("click", async function (event) {
+            let step_size = 360 / Number(document.getElementById('sp_steps').value);
+            await bluetoothSend(`+CT,TURNANGLE=-${step_size};`);
+        });
+
+        document.getElementById("sp_step_forward").addEventListener("click", async function (event) {
+            let step_size = 360 / Number(document.getElementById('sp_steps').value);
+            await bluetoothSend(`+CT,TURNANGLE=${step_size};`);
+        });
+
+        // Keyboard shortcuts
+        document.addEventListener("keydown", (e) => {
+            // Ignore if typing in input field
+            if (e.target.tagName === 'INPUT') return;
+
+            switch (e.key.toLowerCase()) {
+                case "a":
+                    bluetoothSend("+CT,TURNANGLE=1;");
+                    break;
+
+                case "d":
+                    bluetoothSend("+CT,TURNANGLE=-1;");
+                    break;
+
+                case "w":
+                    tiltvalue = tiltvalue + 1;
+                    if (tiltvalue > 30) {
+                        tiltvalue = 30;
+                    }
+                    bluetoothSend(`+CR,TILTVALUE=${tiltvalue};`);
+                    break;
+
+                case "s":
+                    tiltvalue = tiltvalue - 1;
+                    if (tiltvalue < -30) {
+                        tiltvalue = -30;
+                    }
+                    bluetoothSend(`+CR,TILTVALUE=${tiltvalue};`);
+                    break;
+
+                case "e":
+                    bluetoothSend(`+CR,TILTVALUE=${tiltvalue};`);
+                    break;
+
+                case "q":
+                    bluetoothSend(`+CR,TILTVALUE=${tiltvalue};`);
+                    break;
+
+                default:
+                    break;
+            }
+        });
+
+        // Initialize
+        console.log("🚀 Revopoint DAT Controller initialized");
+        console.log("💡 Use W/A/S/D keys for quick control");
+    </script>
+</body>
+
+</html>
