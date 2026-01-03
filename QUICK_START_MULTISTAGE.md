@@ -1,5 +1,13 @@
 # ⚡ Quick Start: Multi-Stage Rotation
 
+## 🌟 Try the Live Demo!
+
+**[→ Launch Application ←](https://htmlpreview.github.io/?https://github.com/Volkula/DATRAPP/blob/main/DAT.html)**
+
+*No installation required - works directly in your browser!*
+
+---
+
 ## 🎯 What is Multi-Stage Rotation?
 
 Multi-Stage Rotation allows you to create **custom scanning sequences** where each stage has its own:
@@ -257,6 +265,10 @@ A: Check if within -30° to +30° limits
 **Ready to create your first multi-stage scan?**
 
 [Open DAT.html](DAT.html) and scroll to "Multi-Stage Rotation"!
+
+---
+
+*Based on the [original controller by eXplOiD1](https://github.com/eXplOiD1/Revopoint-Dual-Axis-Turntable-webbased-Controller/)*
 
 </div>
 

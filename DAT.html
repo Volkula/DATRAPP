@@ -1,11 +1,32 @@
 <!DOCTYPE html>
 <html lang="en">
+<!--
+    Revopoint DAT Controller - Enhanced Version 2.2
+    
+    Based on original work by eXplOiD1:
+    https://github.com/eXplOiD1/Revopoint-Dual-Axis-Turntable-webbased-Controller/
+    
+    Special thanks to SphaeroX for the base system
+    
+    Enhanced features:
+    - Modern gradient UI with animations
+    - Multi-Stage Rotation mode
+    - Click-to-connect status badge
+    - Improved error handling and Bluetooth stability
+    - Responsive design for all devices
+    - Interactive tooltips and visual feedback
+    
+    License: MIT
+-->
 
 <head>
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Revopoint Dual Axis Turntable</title>
+    <title>Revopoint Dual Axis Turntable - Enhanced Controller</title>
+    <meta name="description"
+        content="Advanced web-based controller for Revopoint Dual Axis Turntable with multi-stage rotation and modern UI">
+    <meta name="author" content="Enhanced by AI, based on eXplOiD1's work">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <style>
@@ -496,6 +517,31 @@
         box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
     }
 
+    .keyboard-hint a {
+        transition: all 0.3s ease;
+        position: relative;
+    }
+
+    .keyboard-hint a:hover {
+        color: var(--accent-color) !important;
+        text-shadow: 0 0 10px rgba(102, 126, 234, 0.5);
+    }
+
+    .keyboard-hint a::after {
+        content: '';
+        position: absolute;
+        bottom: -2px;
+        left: 0;
+        width: 0;
+        height: 2px;
+        background: linear-gradient(90deg, var(--primary-color), var(--accent-color));
+        transition: width 0.3s ease;
+    }
+
+    .keyboard-hint a:hover::after {
+        width: 100%;
+    }
+
     .tilt-buttons {
         display: grid;
         grid-template-columns: repeat(3, 1fr);
@@ -978,6 +1024,16 @@
             <strong><i class="fas fa-keyboard"></i> Keyboard Shortcuts:</strong>
             <kbd>W</kbd> Tilt Up | <kbd>S</kbd> Tilt Down |
             <kbd>A</kbd> Rotate Left | <kbd>D</kbd> Rotate Right
+        </div>
+
+        <!-- Credits -->
+        <div class="keyboard-hint" style="margin-top: 10px; font-size: 0.85rem;">
+            <i class="fas fa-heart" style="color: #f093fb;"></i>
+            Based on <a href="https://github.com/eXplOiD1/Revopoint-Dual-Axis-Turntable-webbased-Controller/"
+                target="_blank" style="color: var(--primary-color); text-decoration: none; font-weight: 600;">
+                original work by eXplOiD1
+            </a>
+            | Enhanced with modern UI & multi-stage rotation
         </div>
     </div>
 

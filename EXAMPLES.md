@@ -2,6 +2,12 @@
 
 This document provides ready-to-use configurations for the Multi-Stage Rotation feature.
 
+## 🚀 Try It Live!
+
+**[→ Launch Live Demo ←](https://htmlpreview.github.io/?https://github.com/Volkula/DATRAPP/blob/main/DAT.html)**
+
+*Test these examples directly in your browser - no installation needed!*
+
 ---
 
 ## 📦 Quick Start Examples
@@ -283,6 +289,8 @@ _______________________________________________________
 <div align="center">
 
 Made with ❤️ for the 3D Scanning Community
+
+*Based on the [original controller by eXplOiD1](https://github.com/eXplOiD1/Revopoint-Dual-Axis-Turntable-webbased-Controller/)*
 
 </div>
 

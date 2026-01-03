@@ -2,13 +2,37 @@
 
 <div align="center">
 
-![Version](https://img.shields.io/badge/version-2.0-blue.svg)
+![Version](https://img.shields.io/badge/version-2.2-blue.svg)
 ![License](https://img.shields.io/badge/license-MIT-green.svg)
 ![Web Bluetooth](https://img.shields.io/badge/Web%20Bluetooth-API-purple.svg)
 
 **Advanced Web Interface for Revopoint Dual Axis Turntable Control**
 
-[Features](#-features) • [Quick Start](#-quick-start) • [Usage](#-usage) • [API](#-api-reference) • [Troubleshooting](#-troubleshooting)
+[🚀 Live Demo](https://htmlpreview.github.io/?https://github.com/Volkula/DATRAPP/blob/main/DAT.html) • [Features](#-features) • [Quick Start](#-quick-start) • [Usage](#-usage) • [API](#-api-reference) • [Troubleshooting](#-troubleshooting)
+
+---
+
+**Based on the original work by [eXplOiD1](https://github.com/eXplOiD1/Revopoint-Dual-Axis-Turntable-webbased-Controller/)**
+
+*Enhanced with modern UI, animations, multi-stage rotation, and advanced features*
+
+</div>
+
+---
+
+## 🎬 Live Demo
+
+<div align="center">
+
+### ⚡ Try it instantly in your browser!
+
+[![Demo](https://img.shields.io/badge/🚀-Launch_Live_Demo-success?style=for-the-badge&logo=googlechrome)](https://htmlpreview.github.io/?https://github.com/Volkula/DATRAPP/blob/main/DAT.html)
+
+**No installation • No download • No setup**
+
+*Just click and start controlling your turntable!*
+
+**[📖 Full Demo Guide](DEMO.md)** | **[📸 Screenshots](DEMO.md#-screenshots)** | **[💡 Demo Tips](DEMO.md#-demo-tips)**
 
 </div>
 
@@ -16,6 +40,7 @@
 
 ## 📋 Table of Contents
 
+- [🌟 Live Demo](DEMO.md)
 - [Overview](#-overview)
 - [Features](#-features)
 - [Requirements](#-requirements)
@@ -25,6 +50,7 @@
 - [API Reference](#-api-reference)
 - [Troubleshooting](#-troubleshooting)
 - [Contributing](#-contributing)
+- [Credits](#-acknowledgments)
 - [License](#-license)
 
 ---
@@ -32,6 +58,12 @@
 ## 🎯 Overview
 
 **Revopoint DAT Controller** is a modern, feature-rich web application for controlling the Revopoint Dual Axis Turntable via Web Bluetooth API. This application provides intuitive controls for 3D scanning, photography, and product visualization workflows.
+
+### 🌟 Try It Now!
+
+**[→ Live Demo Available Here ←](https://htmlpreview.github.io/?https://github.com/Volkula/DATRAPP/blob/main/DAT.html)**
+
+No installation needed! Works directly in your browser with Chrome/Edge on any device with Bluetooth.
 
 ### What is a Dual Axis Turntable?
 
@@ -131,7 +163,24 @@ This allows for comprehensive 3D capture from multiple angles automatically.
 
 ## 🚀 Quick Start
 
+### Try it Now! 🎉
+
+**No installation required!** Try the live demo instantly:
+
+👉 **[Launch Live Demo](https://htmlpreview.github.io/?https://github.com/Volkula/DATRAPP/blob/main/DAT.html)** 👈
+
+*Works on any device with Chrome/Edge browser and Bluetooth support*
+
+---
+
 ### Step 1: Open the Application
+
+**Option A: Use the Live Demo (Easiest)**
+- Click the demo link above
+- No download or setup needed
+- Perfect for trying out the application
+
+**Option B: Run Locally**
 
 Simply open the `DAT.html` file in a compatible browser:
 
@@ -777,10 +826,14 @@ MIT License - see LICENSE file for details
 
 ## 🙏 Acknowledgments
 
-- **Revopoint** for the DAT hardware
+- **[eXplOiD1](https://github.com/eXplOiD1)** for the [original web-based controller](https://github.com/eXplOiD1/Revopoint-Dual-Axis-Turntable-webbased-Controller/) - the foundation of this project
+- **[SphaeroX](https://github.com/SphaeroX)** for the base system that inspired the original work
+- **Revopoint** for the DAT hardware and excellent 3D scanning ecosystem
 - **Web Bluetooth Community** for documentation and examples
 - **Font Awesome** for beautiful icons
 - All contributors and users providing feedback
+
+**For detailed credits and project history, see [CREDITS.md](CREDITS.md)**
 
 ---
 
