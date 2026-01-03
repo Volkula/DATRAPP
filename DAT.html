@@ -898,7 +898,8 @@
             </div>
 
             <p style="color: var(--text-secondary); margin-bottom: 20px; text-align: center;">
-                <i class="fas fa-info-circle"></i> Create custom multi-step scanning sequences with different rotation angles and tilt positions
+                <i class="fas fa-info-circle"></i> Create custom multi-step scanning sequences with different rotation
+                angles and tilt positions
             </p>
 
             <div id="stages-container" class="stage-list">
@@ -974,6 +975,10 @@
         var multiStageRunning = false;
         var multiStageStopped = false;
 
+        // Bluetooth operation mutex to prevent concurrent operations
+        var bluetoothBusy = false;
+        var commandQueue = [];
+
         // Update connection status UI
         function updateConnectionStatus(connected) {
             const badge = document.getElementById('status-badge');
@@ -1022,25 +1027,45 @@
 
         async function bluetoothSend(cmd) {
             if (!server) {
-                alert('Please connect to device first!');
-                return;
+                console.warn('Device not connected');
+                return null;
             }
 
-            if (debuglog) console.log("📤", cmd);
+            // Wait if another operation is in progress
+            while (bluetoothBusy) {
+                await sleep(50);
+            }
+
+            bluetoothBusy = true;
 
             try {
+                if (debuglog) console.log("📤", cmd);
+
                 var enc = new TextEncoder();
                 const service = await server.getPrimaryService(0xffe0);
                 const characteristic = await service.getCharacteristic(0xffe1);
                 await characteristic.writeValue(enc.encode(cmd));
+
+                // Small delay before reading
+                await sleep(30);
+
                 var read = await characteristic.readValue();
-                var read_string = await new TextDecoder().decode(read);
+                var read_string = new TextDecoder().decode(read);
 
                 if (debuglog) console.log("📥", read_string);
-                return await read_string;
+
+                bluetoothBusy = false;
+                return read_string;
             } catch (error) {
                 console.error("Bluetooth send error:", error);
-                updateConnectionStatus(false);
+                bluetoothBusy = false;
+
+                if (error.message && error.message.includes('GATT Server is disconnected')) {
+                    updateConnectionStatus(false);
+                    server = false;
+                }
+
+                return null;
             }
         }
 
@@ -1066,6 +1091,12 @@
 
         async function getvalue(a, b) {
             var read = await bluetoothSend('+QT,CHANGEANGLE;');
+
+            if (!read) {
+                console.warn('No response in getvalue');
+                return false;
+            }
+
             var read_result = read;
             var read_result = read_result.replace('+DATA=', '');
             var read_result = read_result.replace(';', '');
@@ -1081,6 +1112,13 @@
 
             while (read_result < a && button_stop_pressed === false) {
                 var read = await bluetoothSend('+QT,CHANGEANGLE;');
+
+                if (!read) {
+                    console.warn('No response in getvalue loop, retrying...');
+                    await sleep(100);
+                    continue;
+                }
+
                 var read_result = read;
                 var read_result = read_result.replace('+DATA=', '');
                 var read_result = read_result.replace(';', '');
@@ -1122,8 +1160,11 @@
             await sleep(1000);
             await getvalue('0', 1);
             await bluetoothSend(`+CT,STOP;`);
+            await sleep(100);
             await bluetoothSend(`+CT,TOZERO;`);
+            await sleep(100);
             await bluetoothSend(`+CR,TILTVALUE=0;`);
+            await sleep(100);
             document.getElementById("a_rot_start").disabled = false;
         });
 
@@ -1179,19 +1220,26 @@
                 let execution = false;
 
                 await bluetoothSend(`+CT,STOP;`);
-                sleep(50);
+                await sleep(100);
                 await bluetoothSend(`+CT,TOZERO;`);
-                sleep(50);
+                await sleep(100);
 
                 while (rws_status) {
                     if (!trigger) {
                         await bluetoothSend(`+CT,TURNANGLE=${step_size};`);
                         sp_current_step = ++sp_current_step;
-                        sleep(50);
+                        await sleep(100);
                         trigger = true;
                     }
 
                     var read = await bluetoothSend('+QT,CHANGEANGLE;');
+
+                    if (!read) {
+                        console.warn('No response in stepped rotation, retrying...');
+                        await sleep(100);
+                        continue;
+                    }
+
                     var angle = read;
                     var angle = angle.replace('+DATA=', '');
                     var angle = angle.replace(';', '');
@@ -1236,10 +1284,11 @@
 
         document.getElementById("sp_stop").addEventListener("click", async function (event) {
             rws_status = false;
-            sleep(500);
+            await sleep(500);
             await bluetoothSend(`+CT,STOP;`);
-            sleep(50);
+            await sleep(100);
             await bluetoothSend(`+CT,TOZERO;`);
+            await sleep(100);
             sp_current_step = 0;
 
             rws_pause = false;
@@ -1328,7 +1377,7 @@
 
         function renderStages() {
             const container = document.getElementById('stages-container');
-            
+
             if (stages.length === 0) {
                 container.innerHTML = `
                     <div class="empty-stages">
@@ -1371,20 +1420,20 @@
 
         function loadPreset() {
             if (stages.length > 0 && !confirm('This will replace current stages. Continue?')) return;
-            
+
             stages = [];
             stageCounter = 0;
-            
+
             // Preset 1: Standard 3-level scan
             const preset = [
                 { id: ++stageCounter, rotation: 360, tilt: 0 },
                 { id: ++stageCounter, rotation: 360, tilt: 10 },
                 { id: ++stageCounter, rotation: 180, tilt: -30 }
             ];
-            
+
             stages = preset;
             renderStages();
-            
+
             // Show notification
             const btn = event.target;
             const originalText = btn.innerHTML;
@@ -1423,40 +1472,48 @@
                 for (let i = 0; i < stages.length && !multiStageStopped; i++) {
                     const stage = stages[i];
                     const stageNum = i + 1;
-                    
+
                     document.getElementById('current-stage-num').textContent = `${stageNum} / ${stages.length}`;
-                    
+
                     // Set tilt position
                     await bluetoothSend(`+CR,TILTVALUE=${stage.tilt};`);
                     await sleep(1000);
-                    
+
                     // Start rotation
                     const rotationAngle = Math.abs(stage.rotation);
                     const direction = stage.rotation >= 0 ? 1 : -1;
-                    
+
                     if (stage.rotation !== 0) {
                         await bluetoothSend(`+CT,TURNANGLE=${stage.rotation};`);
-                        
+
                         // Monitor rotation progress
                         let currentAngle = 0;
                         let lastAngle = 0;
                         let stuckCount = 0;
-                        
+
                         while (currentAngle < rotationAngle - 5 && !multiStageStopped) {
                             await sleep(200);
-                            
+
                             const read = await bluetoothSend('+QT,CHANGEANGLE;');
+
+                            // Check if read is valid
+                            if (!read) {
+                                console.warn('No response from device, retrying...');
+                                await sleep(100);
+                                continue;
+                            }
+
                             let angle = read.replace('+DATA=', '').replace(';', '');
                             currentAngle = parseFloat(angle) || 0;
-                            
+
                             // Calculate progress
                             const progress = Math.min((currentAngle / rotationAngle) * 100, 100);
                             const totalProgress = ((i + (progress / 100)) / stages.length) * 100;
-                            
+
                             document.getElementById('multi-stage-progress').style.width = totalProgress + '%';
                             document.getElementById('multi-stage-progress').textContent = Math.round(totalProgress) + '%';
                             document.getElementById('stage-angle-display').textContent = Math.round(currentAngle) + '°';
-                            
+
                             // Check if stuck
                             if (Math.abs(currentAngle - lastAngle) < 1) {
                                 stuckCount++;
@@ -1469,16 +1526,16 @@
                             }
                             lastAngle = currentAngle;
                         }
-                        
+
                         // Wait for rotation to complete
                         await sleep(500);
                     }
-                    
+
                     // Update progress
                     const totalProgress = ((stageNum) / stages.length) * 100;
                     document.getElementById('multi-stage-progress').style.width = totalProgress + '%';
                     document.getElementById('multi-stage-progress').textContent = Math.round(totalProgress) + '%';
-                    
+
                     if (!multiStageStopped && i < stages.length - 1) {
                         // Reset rotation for next stage
                         await bluetoothSend('+CT,TOZERO;');
@@ -1489,12 +1546,15 @@
                 if (!multiStageStopped) {
                     // Sequence complete - return to zero
                     await bluetoothSend('+CT,STOP;');
+                    await sleep(100);
                     await bluetoothSend('+CT,TOZERO;');
+                    await sleep(100);
                     await bluetoothSend('+CR,TILTVALUE=0;');
-                    
+                    await sleep(100);
+
                     document.getElementById('multi-stage-progress').style.width = '100%';
                     document.getElementById('multi-stage-progress').textContent = 'Complete!';
-                    
+
                     setTimeout(() => {
                         document.getElementById('stage-progress').classList.remove('active');
                     }, 3000);
@@ -1512,13 +1572,16 @@
         document.getElementById("multi_stage_stop").addEventListener("click", async function (event) {
             multiStageStopped = true;
             multiStageRunning = false;
-            
+
+            // Stop commands with delays
             await bluetoothSend('+CT,STOP;');
+            await sleep(100);
             await bluetoothSend('+CR,STOP;');
-            
+            await sleep(100);
+
             document.getElementById('current-stage-num').textContent = 'Stopped';
             document.getElementById("multi_stage_start").disabled = false;
-            
+
             setTimeout(() => {
                 document.getElementById('stage-progress').classList.remove('active');
                 document.getElementById('multi-stage-progress').style.width = '0%';
