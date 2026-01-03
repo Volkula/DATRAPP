@@ -390,6 +390,18 @@
         font-size: 0.9rem;
         font-weight: 600;
         animation: slideIn 0.5s ease-out;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        user-select: none;
+    }
+
+    .status-badge:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+    }
+
+    .status-badge:active {
+        transform: translateY(0);
     }
 
     .status-badge.connected {
@@ -398,10 +410,20 @@
         border: 1px solid var(--success);
     }
 
+    .status-badge.connected:hover {
+        background: rgba(74, 222, 128, 0.3);
+        box-shadow: 0 4px 15px rgba(74, 222, 128, 0.4);
+    }
+
     .status-badge.disconnected {
         background: rgba(248, 113, 113, 0.2);
         color: var(--danger);
         border: 1px solid var(--danger);
+    }
+
+    .status-badge.disconnected:hover {
+        background: rgba(248, 113, 113, 0.3);
+        box-shadow: 0 4px 15px rgba(248, 113, 113, 0.4);
     }
 
     .status-badge i {
@@ -656,6 +678,17 @@
         z-index: 1000;
     }
 
+    /* Special tooltip position for status badge */
+    #status-badge::after {
+        bottom: auto;
+        top: 100%;
+        transform: translateX(-50%) translateY(5px);
+    }
+
+    #status-badge:hover::after {
+        transform: translateX(-50%) translateY(10px);
+    }
+
     .loading {
         display: inline-block;
         width: 12px;
@@ -698,7 +731,8 @@
 
 <body>
     <div class="connection-status">
-        <div id="status-badge" class="status-badge disconnected">
+        <div id="status-badge" class="status-badge disconnected" onclick="toggleConnection()"
+            data-tooltip="Click to connect">
             <i class="fas fa-circle"></i>
             <span>Disconnected</span>
         </div>
@@ -956,6 +990,7 @@
 
         var debuglog = false;
         let server = false;
+        let connectedDevice = null;
         let tiltvalue = 0;
         let sp_current_step = 0;
         let sp_calc_angle = 0;
@@ -987,11 +1022,13 @@
 
             if (connected) {
                 badge.className = 'status-badge connected';
+                badge.setAttribute('data-tooltip', 'Click to disconnect');
                 icon.className = 'fas fa-check-circle';
                 text.textContent = 'Connected';
                 document.getElementById('connection').innerHTML = '<i class="fas fa-check"></i> Connected';
             } else {
                 badge.className = 'status-badge disconnected';
+                badge.setAttribute('data-tooltip', 'Click to connect');
                 icon.className = 'fas fa-circle';
                 text.textContent = 'Disconnected';
                 document.getElementById('connection').innerHTML = '<i class="fas fa-plug"></i> Connect Device';
@@ -1005,6 +1042,7 @@
                     optionalServices: [0xffe0, 0xffe1],
                 });
                 server = await device.gatt.connect();
+                connectedDevice = device;
 
                 if (server !== null) {
                     updateConnectionStatus(true);
@@ -1015,6 +1053,7 @@
                 device.addEventListener('gattserverdisconnected', () => {
                     updateConnectionStatus(false);
                     server = false;
+                    connectedDevice = null;
                     console.log("❌ Device disconnected");
                 });
 
@@ -1022,6 +1061,59 @@
             } catch (error) {
                 console.error("Connection error:", error);
                 updateConnectionStatus(false);
+            }
+        }
+
+        async function disconnect() {
+            try {
+                if (server && connectedDevice) {
+                    // Stop any running operations first
+                    if (multiStageRunning) {
+                        multiStageStopped = true;
+                        multiStageRunning = false;
+                    }
+                    if (rws_status) {
+                        rws_status = false;
+                    }
+                    if (button_stop_pressed === false && getvalue_running) {
+                        button_stop_pressed = true;
+                    }
+
+                    // Try to stop motors before disconnect
+                    try {
+                        await bluetoothSend('+CT,STOP;');
+                        await sleep(50);
+                        await bluetoothSend('+CR,STOP;');
+                        await sleep(50);
+                    } catch (e) {
+                        console.warn('Could not send stop commands before disconnect');
+                    }
+
+                    // Disconnect
+                    if (connectedDevice.gatt.connected) {
+                        await connectedDevice.gatt.disconnect();
+                    }
+
+                    server = false;
+                    connectedDevice = null;
+                    updateConnectionStatus(false);
+                    console.log("🔌 Disconnected by user");
+                }
+            } catch (error) {
+                console.error("Disconnect error:", error);
+                server = false;
+                connectedDevice = null;
+                updateConnectionStatus(false);
+            }
+        }
+
+        // Toggle connection when clicking status badge
+        async function toggleConnection() {
+            const badge = document.getElementById('status-badge');
+            if (badge.classList.contains('connected')) {
+                await disconnect();
+            } else {
+                await connect();
             }
         }
 

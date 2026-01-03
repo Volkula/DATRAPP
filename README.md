@@ -48,9 +48,10 @@ This allows for comprehensive 3D capture from multiple angles automatically.
 ### 🎨 Modern User Interface
 - **Beautiful gradient design** with smooth animations
 - **Responsive layout** - works on desktop, tablet, and mobile
-- **Real-time connection status** indicator
+- **Real-time connection status** indicator with click-to-connect/disconnect
 - **Interactive tooltips** for better user guidance
 - **Dark theme** optimized for extended use
+- **Quick connect badge** - connect/disconnect with one click from anywhere
 
 ### 🎮 Control Modes
 
@@ -161,10 +162,19 @@ Ensure Bluetooth is enabled on your device:
 
 ### Step 4: Connect
 
-1. Click the **"Connect Device"** button in the application
+**Option 1: Quick Connect (Status Badge)**
+1. Click the **status badge** in the top-right corner (shows "Disconnected")
+2. Select your turntable from the Bluetooth device list
+3. Click **"Pair"**
+4. Status badge will turn green and show "Connected"
+
+**Option 2: Connection Card**
+1. Click the **"Connect Device"** button in the Connection section
 2. Select your turntable from the Bluetooth device list
 3. Click **"Pair"**
 4. Connection status will show "Connected" in green
+
+**💡 Tip:** You can click the status badge anytime to connect/disconnect!
 
 ### Step 5: Start Controlling
 
@@ -792,7 +802,17 @@ MIT License - see LICENSE file for details
 
 ## 📈 Changelog
 
-### Version 2.1 (Current)
+### Version 2.2 (Current)
+- ✨ **NEW: Click-to-connect status badge** - connect/disconnect with one click
+- ✨ Improved disconnect handling - safely stops all operations
+- ✨ Interactive status indicator with hover effects
+- ✨ Context-aware tooltips on status badge
+- 🐛 Fixed GATT operation conflicts with mutex protection
+- 🐛 Fixed error handling for null responses
+- 🐛 Added delays between Bluetooth commands for stability
+- 🐛 Improved error recovery in all automation modes
+
+### Version 2.1
 - ✨ **NEW: Multi-Stage Rotation mode** with custom sequences
 - ✨ Add/remove stages dynamically with visual interface
 - ✨ Real-time progress tracking with animated progress bar
