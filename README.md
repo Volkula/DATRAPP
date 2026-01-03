@@ -86,7 +86,16 @@ This allows for comprehensive 3D capture from multiple angles automatically.
 - Manual step forward/backward
 - Ideal for photogrammetry workflows
 
-#### 6. **Keyboard Shortcuts**
+#### 6. **Multi-Stage Rotation (NEW!)**
+- Create custom sequences with multiple stages
+- Configure rotation angle and tilt for each stage independently
+- Add/remove stages dynamically
+- Real-time progress tracking with visual progress bar
+- Save and load presets
+- Perfect for complex 3D scanning scenarios
+- Example: 360° at 0°, 360° at 10°, 180° at -30°
+
+#### 7. **Keyboard Shortcuts**
 - `W` - Tilt up (+1°)
 - `S` - Tilt down (-1°)
 - `A` - Rotate left (+1°)
@@ -212,6 +221,40 @@ For taking photos at regular intervals:
 5. Camera trigger can be manual or automatic during pauses
 6. Use **"Pause"** to adjust camera/lighting between shots
 
+### Multi-Stage Rotation Workflow (Advanced)
+
+Create complex scanning sequences with full control:
+
+1. **Go to "Multi-Stage Rotation" section**
+2. **Click "Add Stage"** for each scanning position
+3. **Configure each stage**:
+   - **Rotation Angle**: -360° to 360° (negative = left, positive = right)
+   - **Tilt Angle**: -30° to 30° (platform tilt position)
+4. **Example configurations**:
+
+   **Basic 3-Level Scan:**
+   - Stage 1: Rotation 360°, Tilt 0° (horizontal view)
+   - Stage 2: Rotation 360°, Tilt 10° (slight angle)
+   - Stage 3: Rotation 180°, Tilt -30° (top-down view)
+
+   **Detailed Object Scan:**
+   - Stage 1: Rotation 360°, Tilt -30° (from above)
+   - Stage 2: Rotation 360°, Tilt -15°
+   - Stage 3: Rotation 360°, Tilt 0° (horizontal)
+   - Stage 4: Rotation 360°, Tilt 15°
+   - Stage 5: Rotation 360°, Tilt 30° (from below)
+
+5. **Click "Start Sequence"** to begin
+6. **Monitor progress** in real-time with the progress bar
+7. **Use presets** for quick setup with "Load Preset"
+
+**Tips:**
+- ✅ Test with smaller rotation angles first (90°-180°)
+- ✅ Use "Load Preset" to see example configurations
+- ✅ Each stage automatically returns to zero before next stage
+- ✅ Click "Stop Sequence" at any time to halt execution
+- ✅ Save complex sequences by noting down the values
+
 ### Tips & Best Practices
 
 ✅ **DO:**
@@ -272,6 +315,38 @@ For taking photos at regular intervals:
 
 #### Command Format
 All commands follow the pattern: `+PREFIX,COMMAND=VALUE;`
+
+### Multi-Stage Rotation Interface
+
+The Multi-Stage Rotation feature provides a powerful interface for creating complex scanning sequences:
+
+**UI Components:**
+1. **Stage List** - Visual list of all configured stages with numbering
+2. **Stage Controls** - Each stage has:
+   - Rotation angle input (-360° to +360°)
+   - Tilt angle input (-30° to +30°)
+   - Remove button (delete individual stage)
+3. **Action Buttons**:
+   - **Add Stage** - Add new stage to sequence
+   - **Start Sequence** - Execute all stages in order
+   - **Stop Sequence** - Emergency stop during execution
+   - **Clear All** - Remove all stages
+   - **Load Preset** - Load example configuration
+4. **Progress Display** - Shows:
+   - Current stage number
+   - Current rotation angle
+   - Visual progress bar with percentage
+
+**Workflow:**
+```
+User adds stages → Configure angles → Start sequence
+  ↓                    ↓                    ↓
+Visual list      Input validation    Real-time feedback
+  ↓                    ↓                    ↓
+Empty state      Min/max limits      Progress tracking
+                                           ↓
+                                    Auto-return to zero
+```
 
 ### Command Reference
 
@@ -548,9 +623,10 @@ document.addEventListener("keydown", (e) => {
 
 Many 3D scanning applications can be synchronized with the turntable:
 
-1. **Use Stepped Rotation Mode**
-2. **Set appropriate pause time** for scan completion
-3. **Configure software to trigger on:**
+1. **Use Stepped Rotation Mode** for simple scans
+2. **Use Multi-Stage Rotation** for complex sequences
+3. **Set appropriate pause time** for scan completion
+4. **Configure software to trigger on:**
    - Timer (match pause duration)
    - Keyboard shortcut
    - Network trigger
@@ -570,6 +646,43 @@ Tilt 2: -25° (above)
 Tilt 3: 15°  (below)
 
 // Total photos: 36 × 3 = 108 images
+```
+
+### Multi-Stage Scanning Pipeline
+
+Example configurations for different object types:
+
+**Small Object (Jewelry, Coins):**
+```javascript
+// 5-stage high-detail scan
+Stage 1: Rotation 360°, Tilt -30° (top)
+Stage 2: Rotation 360°, Tilt -15° 
+Stage 3: Rotation 360°, Tilt 0°   (middle)
+Stage 4: Rotation 360°, Tilt 15°
+Stage 5: Rotation 360°, Tilt 30°  (bottom)
+
+// Total coverage: 5 full rotations from different angles
+```
+
+**Medium Object (Figurines, Bottles):**
+```javascript
+// 3-stage balanced scan
+Stage 1: Rotation 360°, Tilt 0°   (horizontal)
+Stage 2: Rotation 360°, Tilt -20° (top angle)
+Stage 3: Rotation 180°, Tilt 20°  (bottom angle, partial)
+
+// Total: 2.5 rotations with varied perspectives
+```
+
+**Large Object (Sculptures, Furniture):**
+```javascript
+// 4-stage comprehensive scan
+Stage 1: Rotation 180°, Tilt -30° (top-front)
+Stage 2: Rotation 180°, Tilt -30° (reset + top-back)
+Stage 3: Rotation 360°, Tilt 0°   (full horizontal)
+Stage 4: Rotation 180°, Tilt 25°  (bottom angle)
+
+// Covers all major angles without redundancy
 ```
 
 ### Remote Control via JavaScript Console
@@ -679,7 +792,17 @@ MIT License - see LICENSE file for details
 
 ## 📈 Changelog
 
-### Version 2.0 (Current)
+### Version 2.1 (Current)
+- ✨ **NEW: Multi-Stage Rotation mode** with custom sequences
+- ✨ Add/remove stages dynamically with visual interface
+- ✨ Real-time progress tracking with animated progress bar
+- ✨ Load preset configurations for quick setup
+- ✨ Independent rotation and tilt control per stage
+- ✨ Visual feedback during multi-stage execution
+- 📚 Updated documentation with multi-stage examples
+- 🎨 Enhanced UI animations for stage management
+
+### Version 2.0
 - ✨ Complete UI redesign with modern gradient theme
 - ✨ Added smooth animations and transitions
 - ✨ Real-time connection status indicator
